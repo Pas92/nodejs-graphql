@@ -20,16 +20,22 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
       },
     },
     async function (request, reply): Promise<MemberTypeEntity> {
-      const user = fastify.db.memberTypes.findOne(request.id);
+      const user = await fastify.db.memberTypes.findOne({
+        key: 'id',
+        equals: request.params.id,
+      });
 
-      if ((await user) === null) {
+      if (user === null) {
         const err = fastify.httpErrors.notFound(
-          `Member with id ${request.id} does not exist`
+          `Member with id ${request.params.id} does not exist`
         );
         reply.send(err);
         throw err;
       } else {
-        return user as Promise<MemberTypeEntity>;
+        return fastify.db.memberTypes.findOne({
+          key: 'id',
+          equals: request.params.id,
+        }) as Promise<MemberTypeEntity>;
       }
     }
   );
@@ -43,7 +49,10 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
       },
     },
     async function (request, reply): Promise<MemberTypeEntity> {
-      const user = await fastify.db.memberTypes.findOne(request.id);
+      const user = await fastify.db.memberTypes.findOne({
+        key: 'id',
+        equals: request.params.id,
+      });
 
       if (user === null) {
         const err = fastify.httpErrors.badRequest(
@@ -53,15 +62,7 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
         throw err;
       }
 
-      user.discount = request.body.discount || user.discount;
-      user.monthPostsLimit =
-        request.body.monthPostsLimit || user.monthPostsLimit;
-
-      // if (!request.body.discount || !request.body.monthPostsLimit) {
-      //   throw fastify.httpErrors.notFound(`Incorrect Body. Field is missing`);
-      // }
-
-      return fastify.db.memberTypes.change(request.id, user);
+      return fastify.db.memberTypes.change(request.params.id, request.body);
     }
   );
 };
