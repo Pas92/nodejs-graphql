@@ -18,10 +18,13 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
       },
     },
     async function (request, reply): Promise<PostEntity> {
-      const post = fastify.db.posts.findOne(request.id);
+      const post = fastify.db.posts.findOne({
+        key: 'id',
+        equals: request.params.id,
+      });
 
-      if (post === null) {
-        const err = fastify.httpErrors.badRequest(
+      if ((await post) === null) {
+        const err = fastify.httpErrors.notFound(
           `Post with id ${request.id} does not exist`
         );
         reply.send(err);
@@ -41,7 +44,11 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
     },
     async function (request, reply): Promise<PostEntity> {
       if (!request.body.content || !request.body.title) {
-        throw fastify.httpErrors.notFound(`Incorrect Body. Field is missing`);
+        const err = fastify.httpErrors.badRequest(
+          `Incorrect Body. Field is missing`
+        );
+        reply.send(err);
+        throw err;
       }
 
       return fastify.db.posts.create(request.body);
@@ -56,16 +63,19 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
       },
     },
     async function (request, reply): Promise<PostEntity> {
-      const post = await fastify.db.posts.findOne(request.id);
+      const post = await fastify.db.posts.findOne({
+        key: 'id',
+        equals: request.params.id,
+      });
 
       if (post === null) {
         const err = fastify.httpErrors.badRequest(
-          `Post with id ${request.id} does not exist`
+          `Post with id ${request.params.id} does not exist`
         );
         reply.send(err);
         throw err;
       }
-      return fastify.db.posts.delete(request.id);
+      return fastify.db.posts.delete(request.params.id);
     }
   );
 
@@ -78,21 +88,20 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
       },
     },
     async function (request, reply): Promise<PostEntity> {
-      const post = await fastify.db.posts.findOne(request.id);
+      const post = await fastify.db.posts.findOne({
+        key: 'id',
+        equals: request.params.id,
+      });
 
       if (post === null) {
-        const err = fastify.httpErrors.notFound(
-          `Post with id ${request.id} does not exist`
+        const err = fastify.httpErrors.badRequest(
+          `Post with id ${request.params.id} does not exist`
         );
         reply.send(err);
         throw err;
       }
 
-      if (!request.body.content || !request.body.title) {
-        throw fastify.httpErrors.notFound(`Incorrect Body. Field is missing`);
-      }
-
-      return fastify.db.posts.change(request.id, request.body);
+      return fastify.db.posts.change(request.params.id, request.body);
     }
   );
 };

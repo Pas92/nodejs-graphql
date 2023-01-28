@@ -18,17 +18,20 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
       },
     },
     async function (request, reply): Promise<ProfileEntity> {
-      const profile = fastify.db.profiles.findOne(request.id);
+      const profile = fastify.db.profiles.findOne({
+        key: 'id',
+        equals: request.params.id,
+      });
 
       if ((await profile) === null) {
         const err = fastify.httpErrors.notFound(
-          `User with id ${request.id} does not exist`
+          `Profile with id ${request.params.id} does not exist`
         );
-        reply.code(404).send(err);
+        reply.send(err);
         throw err;
-      } else {
-        return profile as Promise<ProfileEntity>;
       }
+
+      return profile as Promise<ProfileEntity>;
     }
   );
 
@@ -40,25 +43,47 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
       },
     },
     async function (request, reply): Promise<ProfileEntity> {
-      const requiredFields = createProfileBodySchema.required;
-      const bodyFields: Partial<typeof requiredFields> = Object.keys(
-        request.body
-      ) as unknown as Partial<typeof requiredFields>;
+      // const requiredFields = createProfileBodySchema.required;
+      // const bodyFields: Partial<typeof requiredFields> = Object.keys(
+      //   request.body
+      // ) as unknown as Partial<typeof requiredFields>;
 
-      let isInvalid: boolean = bodyFields.length === requiredFields.length;
+      // let isInvalid: boolean = bodyFields.length === requiredFields.length;
 
-      if (isInvalid) {
-        requiredFields.forEach((e) => {
-          if (!bodyFields.includes(e)) {
-            isInvalid = true;
-          }
-        });
+      // if (isInvalid) {
+      //   requiredFields.forEach((e) => {
+      //     if (!bodyFields.includes(e)) {
+      //       isInvalid = true;
+      //     }
+      //   });
+      // }
+
+      // if (isInvalid) {
+      //   const err = fastify.httpErrors.badRequest(
+      //     `Incorrect Body. Field is missing`
+      //   );
+      //   reply.send(err);
+      //   throw err;
+      // }
+
+      const profile = await fastify.db.profiles.findOne({
+        key: 'userId',
+        equals: request.body.userId,
+      });
+
+      if (profile) {
+        const err = fastify.httpErrors.badRequest(
+          `User is already has a profile`
+        );
+        reply.send(err);
+        throw err;
       }
 
-      if (isInvalid) {
-        throw fastify.httpErrors.notFound(`Incorrect Body. Field is missing`);
+      if (request.body.memberTypeId !== 'basic') {
+        const err = fastify.httpErrors.badRequest(`Invalid member type`);
+        reply.send(err);
+        throw err;
       }
-
       return fastify.db.profiles.create(request.body);
     }
   );
@@ -71,16 +96,20 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
       },
     },
     async function (request, reply): Promise<ProfileEntity> {
-      const profile = fastify.db.profiles.findOne(request.id);
+      const profile = await fastify.db.profiles.findOne({
+        key: 'id',
+        equals: request.params.id,
+      });
+
       if (profile === null) {
-        const err = fastify.httpErrors.notFound(
-          `User with id ${request.id} does not exist`
+        const err = fastify.httpErrors.badRequest(
+          `User with id ${request.params.id} does not exist`
         );
         reply.send(err);
         throw err;
-      } else {
-        return fastify.db.profiles.delete(request.id);
       }
+
+      return fastify.db.profiles.delete(request.params.id);
     }
   );
 
@@ -93,26 +122,20 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
       },
     },
     async function (request, reply): Promise<ProfileEntity> {
-      const requiredFields = createProfileBodySchema.required;
-      const bodyFields: Partial<typeof requiredFields> = Object.keys(
-        request.body
-      ) as unknown as Partial<typeof requiredFields>;
+      const profile = await fastify.db.profiles.findOne({
+        key: 'id',
+        equals: request.params.id,
+      });
 
-      let isInvalid: boolean = bodyFields.length === requiredFields.length;
-
-      if (isInvalid) {
-        requiredFields.forEach((e) => {
-          if (!bodyFields.includes(e)) {
-            isInvalid = true;
-          }
-        });
+      if (profile === null) {
+        const err = fastify.httpErrors.badRequest(
+          `Profile with id ${request.params.id} does not exist`
+        );
+        reply.send(err);
+        throw err;
       }
 
-      if (isInvalid) {
-        throw fastify.httpErrors.notFound(`Incorrect Body. Field is missing`);
-      }
-
-      return fastify.db.profiles.change(request.id, request.body);
+      return fastify.db.profiles.change(request.params.id, request.body);
     }
   );
 };
