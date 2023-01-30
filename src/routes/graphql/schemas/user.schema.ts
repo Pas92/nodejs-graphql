@@ -7,9 +7,13 @@ import {
   GraphQLString,
 } from 'graphql';
 import { PostEntity } from '../../../utils/DB/entities/DBPosts';
+import { UserEntity } from '../../../utils/DB/entities/DBUsers';
 import { memberType } from './member-type.schema';
 import { postType } from './post.schema';
 import { profileType } from './profile.schema';
+
+export type CreateUserDTO = Omit<UserEntity, 'id' | 'subscribedToUserIds'>;
+export type ChangeUserDTO = Partial<Omit<UserEntity, 'id'>>;
 
 export const userType = new GraphQLObjectType({
   name: 'user',
@@ -92,6 +96,21 @@ export const userWithContentType = new GraphQLObjectType({
 
 export const userInputType = new GraphQLInputObjectType({
   name: 'userInput',
+  fields: () => ({
+    firstName: {
+      type: new GraphQLNonNull(GraphQLString),
+    },
+    lastName: {
+      type: new GraphQLNonNull(GraphQLString),
+    },
+    email: {
+      type: new GraphQLNonNull(GraphQLString),
+    },
+  }),
+});
+
+export const userUpdateInputType = new GraphQLInputObjectType({
+  name: 'userUpdateInput',
   fields: () => ({
     firstName: {
       type: new GraphQLNonNull(GraphQLString),

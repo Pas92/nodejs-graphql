@@ -72,3 +72,30 @@ export const profileInputType = new GraphQLInputObjectType({
     },
   }),
 });
+
+export const profileUpdateInputType = new GraphQLInputObjectType({
+  name: 'profileUpdateInput',
+  fields: () => ({
+    avatar: {
+      type: GraphQLString,
+    },
+    sex: {
+      type: GraphQLString,
+    },
+    birthday: {
+      type: GraphQLString,
+    },
+    country: {
+      type: GraphQLString,
+    },
+    street: {
+      type: GraphQLString,
+    },
+    city: {
+      type: GraphQLString,
+    },
+    memberTypeId: {
+      type: memberTypeEnum,
+    },
+  }),
+});

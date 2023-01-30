@@ -151,7 +151,7 @@ const plugin: FastifyPluginAsyncJsonSchemaToTs = async (
 
       if (user2 === null) {
         const err = fastify.httpErrors.badRequest(
-          `User with id ${request.body.userId} does not exist`
+          `User with id ${request.params.id} does not exist`
         );
         reply.send(err);
         throw err;

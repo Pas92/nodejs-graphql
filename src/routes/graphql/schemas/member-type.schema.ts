@@ -1,4 +1,9 @@
-import { GraphQLEnumType, GraphQLInt, GraphQLObjectType } from 'graphql';
+import {
+  GraphQLEnumType,
+  GraphQLInputObjectType,
+  GraphQLInt,
+  GraphQLObjectType,
+} from 'graphql';
 
 export const memberTypeEnum = new GraphQLEnumType({
   name: 'memberTypeEnum',
@@ -18,6 +23,18 @@ export const memberType = new GraphQLObjectType({
     id: {
       type: memberTypeEnum,
     },
+    discount: {
+      type: GraphQLInt,
+    },
+    monthPostsLimit: {
+      type: GraphQLInt,
+    },
+  }),
+});
+
+export const memberInputUpdateType = new GraphQLInputObjectType({
+  name: 'memberInputUpdateType',
+  fields: () => ({
     discount: {
       type: GraphQLInt,
     },
