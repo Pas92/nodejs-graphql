@@ -7,6 +7,7 @@ import {
   GraphQLString,
 } from 'graphql';
 import { PostEntity } from '../../../utils/DB/entities/DBPosts';
+import { ProfileEntity } from '../../../utils/DB/entities/DBProfiles';
 import { UserEntity } from '../../../utils/DB/entities/DBUsers';
 import { memberType } from './member-type.schema';
 import { postType } from './post.schema';
@@ -86,6 +87,74 @@ export const userWithContentType = new GraphQLObjectType({
         }
 
         return null;
+      },
+    },
+    subscribedToUserIds: {
+      type: new GraphQLList(GraphQLString),
+    },
+  }),
+});
+
+export const userWithUserSubscribedToProfilesType = new GraphQLObjectType({
+  name: 'userWithUserSubscribedToProfiles',
+  fields: () => ({
+    id: {
+      type: GraphQLID,
+    },
+    firstName: {
+      type: GraphQLString,
+    },
+    lastName: {
+      type: GraphQLString,
+    },
+    email: {
+      type: GraphQLString,
+    },
+    profile: {
+      type: new GraphQLList(profileType),
+      resolve: async (source, args, context, info) => {
+        const profiles: ProfileEntity[] = await context.db.profiles.findMany();
+        const users: UserEntity[] = await context.db.users.findMany();
+
+        const userSubscribedTo = users.filter((user) =>
+          user.subscribedToUserIds.includes(source.id)
+        );
+        const userSubscribedToIds = userSubscribedTo.map((user) => user.id);
+
+        return profiles.filter((profile) =>
+          userSubscribedToIds.includes(profile.userId)
+        );
+      },
+    },
+    subscribedToUserIds: {
+      type: new GraphQLList(GraphQLString),
+    },
+  }),
+});
+
+export const userWithSubscribedToUserPostsType = new GraphQLObjectType({
+  name: 'userWithSubscribedToUserPosts',
+  fields: () => ({
+    id: {
+      type: GraphQLID,
+    },
+    firstName: {
+      type: GraphQLString,
+    },
+    lastName: {
+      type: GraphQLString,
+    },
+    email: {
+      type: GraphQLString,
+    },
+    posts: {
+      type: new GraphQLList(postType),
+      resolve: async (source, args, context, info) => {
+        const posts: PostEntity[] = await context.db.posts.findMany();
+
+        return posts.filter((post) =>
+          source.subscribedToUserIds.includes(post.userId)
+        );
       },
     },
     subscribedToUserIds: {

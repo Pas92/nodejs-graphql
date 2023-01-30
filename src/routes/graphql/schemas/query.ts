@@ -2,7 +2,12 @@ import { GraphQLID, GraphQLList, GraphQLObjectType } from 'graphql';
 import { memberType, memberTypeEnum } from './member-type.schema';
 import { postType } from './post.schema';
 import { profileType } from './profile.schema';
-import { userType, userWithContentType } from './user.schema';
+import {
+  userType,
+  userWithContentType,
+  userWithSubscribedToUserPostsType,
+  userWithUserSubscribedToProfilesType,
+} from './user.schema';
 
 export const queryType = new GraphQLObjectType({
   name: 'Query',
@@ -38,6 +43,62 @@ export const queryType = new GraphQLObjectType({
     },
     userWithContent: {
       type: new GraphQLList(userWithContentType),
+      args: {
+        id: {
+          type: GraphQLID,
+        },
+      },
+      variables: {
+        userID: {
+          type: GraphQLID,
+        },
+      },
+      resolve: async (_source, args, context, info) => {
+        if (info.variableValues.userID) {
+          const user = await context.db.users.findOne({
+            key: 'id',
+            equals: args.id,
+          });
+
+          if (!user) {
+            throw new Error(`User ${args.id} does not exist`);
+          }
+
+          return [user];
+        }
+        return context.db.users.findMany();
+      },
+    },
+    userWithUserSubscribedToProfiles: {
+      type: new GraphQLList(userWithUserSubscribedToProfilesType),
+      args: {
+        id: {
+          type: GraphQLID,
+        },
+      },
+      variables: {
+        userID: {
+          type: GraphQLID,
+        },
+      },
+      resolve: async (_source, args, context, info) => {
+        if (info.variableValues.userID) {
+          const user = await context.db.users.findOne({
+            key: 'id',
+            equals: args.id,
+          });
+
+          if (!user) {
+            throw new Error(`User ${args.id} does not exist`);
+          }
+
+          return [user];
+        }
+        return context.db.users.findMany();
+      },
+    },
+    userWithSubscribedToUserPosts: {
+      type: new GraphQLList(userWithSubscribedToUserPostsType),
       args: {
         id: {
           type: GraphQLID,
