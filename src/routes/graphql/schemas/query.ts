@@ -2,42 +2,42 @@ import { GraphQLID, GraphQLList, GraphQLObjectType } from 'graphql';
 import { memberType, memberTypeEnum } from './member-type.schema';
 import { postType } from './post.schema';
 import { profileType } from './profile.schema';
-import { userType } from './user.schema';
+import { userType, userWithContentType } from './user.schema';
 
 export const queryType = new GraphQLObjectType({
   name: 'Query',
   description: 'Query',
   fields: () => ({
-    memberType: {
-      type: new GraphQLList(memberType),
+    user: {
+      type: new GraphQLList(userType),
       args: {
         id: {
-          type: memberTypeEnum,
+          type: GraphQLID,
         },
       },
       variables: {
-        memberTypeId: {
-          type: memberTypeEnum,
+        userID: {
+          type: GraphQLID,
         },
       },
       resolve: async (_source, args, context, info) => {
-        if (info.variableValues.memberTypeId) {
-          const memberType = await context.db.memberTypes.findOne({
+        if (info.variableValues.userID) {
+          const user = await context.db.users.findOne({
             key: 'id',
             equals: args.id,
           });
 
-          if (!memberType) {
-            throw new Error(`Member type ${args.id} does not exist`);
+          if (!user) {
+            throw new Error(`User ${args.id} does not exist`);
           }
 
-          return [memberType];
+          return [user];
         }
-        return context.db.memberTypes.findMany();
+        return context.db.users.findMany();
       },
     },
-    user: {
-      type: new GraphQLList(userType),
+    userWithContent: {
+      type: new GraphQLList(userWithContentType),
       args: {
         id: {
           type: GraphQLID,
@@ -77,6 +77,7 @@ export const queryType = new GraphQLObjectType({
         },
       },
       resolve: async (_source, args, context, info) => {
+        console.log(_source);
         if (info.variableValues.profileId) {
           const profile = await context.db.profiles.findOne({
             key: 'id',
@@ -87,7 +88,7 @@ export const queryType = new GraphQLObjectType({
             throw new Error(`Profile ${args.id} does not exist`);
           }
 
-          return [profile];
+          return Promise.resolve([profile]);
         }
         return context.db.profiles.findMany();
       },
@@ -118,6 +119,34 @@ export const queryType = new GraphQLObjectType({
           return [post];
         }
         return context.db.posts.findMany();
+      },
+    },
+    memberType: {
+      type: new GraphQLList(memberType),
+      args: {
+        id: {
+          type: memberTypeEnum,
+        },
+      },
+      variables: {
+        memberTypeId: {
+          type: memberTypeEnum,
+        },
+      },
+      resolve: async (_source, args, context, info) => {
+        if (info.variableValues.memberTypeId) {
+          const memberType = await context.db.memberTypes.findOne({
+            key: 'id',
+            equals: args.id,
+          });
+
+          if (!memberType) {
+            throw new Error(`Member type ${args.id} does not exist`);
+          }
+
+          return Promise.resolve([memberType]);
+        }
+        return context.db.memberTypes.findMany();
       },
     },
   }),
