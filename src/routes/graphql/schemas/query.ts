@@ -1,5 +1,5 @@
 import { GraphQLID, GraphQLList, GraphQLObjectType } from 'graphql';
-import { memberType } from './member-type.schema';
+import { memberType, memberTypeEnum } from './member-type.schema';
 import { postType } from './post.schema';
 import { profileType } from './profile.schema';
 import { userType } from './user.schema';
@@ -12,11 +12,16 @@ export const queryType = new GraphQLObjectType({
       type: new GraphQLList(memberType),
       args: {
         id: {
-          type: GraphQLID,
+          type: memberTypeEnum,
         },
       },
-      resolve: async (_source, args, context) => {
-        if (args.id) {
+      variables: {
+        memberTypeId: {
+          type: memberTypeEnum,
+        },
+      },
+      resolve: async (_source, args, context, info) => {
+        if (info.variableValues.memberTypeId) {
           const memberType = await context.db.memberTypes.findOne({
             key: 'id',
             equals: args.id,
@@ -38,8 +43,13 @@ export const queryType = new GraphQLObjectType({
           type: GraphQLID,
         },
       },
-      resolve: async (_source, args, context) => {
-        if (args.id) {
+      variables: {
+        userID: {
+          type: GraphQLID,
+        },
+      },
+      resolve: async (_source, args, context, info) => {
+        if (info.variableValues.userID) {
           const user = await context.db.users.findOne({
             key: 'id',
             equals: args.id,
@@ -61,8 +71,13 @@ export const queryType = new GraphQLObjectType({
           type: GraphQLID,
         },
       },
-      resolve: async (_source, args, context) => {
-        if (args.id) {
+      variables: {
+        profileId: {
+          type: GraphQLID,
+        },
+      },
+      resolve: async (_source, args, context, info) => {
+        if (info.variableValues.profileId) {
           const profile = await context.db.profiles.findOne({
             key: 'id',
             equals: args.id,
@@ -84,8 +99,13 @@ export const queryType = new GraphQLObjectType({
           type: GraphQLID,
         },
       },
-      resolve: async (_source, args, context) => {
-        if (args.id) {
+      variables: {
+        postId: {
+          type: GraphQLID,
+        },
+      },
+      resolve: async (_source, args, context, info) => {
+        if (info.variableValues.postId) {
           const post = await context.db.posts.findOne({
             key: 'id',
             equals: args.id,
