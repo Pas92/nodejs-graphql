@@ -15,9 +15,19 @@ export const queryType = new GraphQLObjectType({
           type: GraphQLID,
         },
       },
-      resolve: (_source, _args, context) => {
-        console.log('resolver');
-        console.log(_args);
+      resolve: async (_source, args, context) => {
+        if (args.id) {
+          const memberType = await context.db.memberTypes.findOne({
+            key: 'id',
+            equals: args.id,
+          });
+
+          if (!memberType) {
+            throw new Error(`Member type ${args.id} does not exist`);
+          }
+
+          return [memberType];
+        }
         return context.db.memberTypes.findMany();
       },
     },
@@ -28,9 +38,19 @@ export const queryType = new GraphQLObjectType({
           type: GraphQLID,
         },
       },
-      resolve: (_source, _args, context) => {
-        console.log('resolver users');
-        console.log(_args);
+      resolve: async (_source, args, context) => {
+        if (args.id) {
+          const user = await context.db.users.findOne({
+            key: 'id',
+            equals: args.id,
+          });
+
+          if (!user) {
+            throw new Error(`User ${args.id} does not exist`);
+          }
+
+          return [user];
+        }
         return context.db.users.findMany();
       },
     },
@@ -41,9 +61,19 @@ export const queryType = new GraphQLObjectType({
           type: GraphQLID,
         },
       },
-      resolve: (_source, _args, context) => {
-        console.log('resolver profiles');
-        console.log(_args);
+      resolve: async (_source, args, context) => {
+        if (args.id) {
+          const profile = await context.db.profiles.findOne({
+            key: 'id',
+            equals: args.id,
+          });
+
+          if (!profile) {
+            throw new Error(`Profile ${args.id} does not exist`);
+          }
+
+          return [profile];
+        }
         return context.db.profiles.findMany();
       },
     },
@@ -54,9 +84,19 @@ export const queryType = new GraphQLObjectType({
           type: GraphQLID,
         },
       },
-      resolve: (_source, _args, context) => {
-        console.log('resolver profiles');
-        console.log(_args);
+      resolve: async (_source, args, context) => {
+        if (args.id) {
+          const post = await context.db.posts.findOne({
+            key: 'id',
+            equals: args.id,
+          });
+
+          if (!post) {
+            throw new Error(`Post ${args.id} does not exist`);
+          }
+
+          return [post];
+        }
         return context.db.posts.findMany();
       },
     },
