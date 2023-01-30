@@ -7,7 +7,7 @@
 	},
 	"item": [
 		{
-			"name": "2.1 Get users",
+			"name": "2.1 Get data",
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -43,8 +43,37 @@
 				"body": {
 					"mode": "graphql",
 					"graphql": {
-						"query": "\r\n    mutation {\r\n        createUser(user: $user) {\r\n            id,\r\n            firstName,\r\n            lastName,\r\n            email\r\n        }\r\n    }\r\n",
-						"variables": "{\r\n    \"$user\": {\r\n    \"firstName\": \"FirstOne 2\",\r\n    \"lastName\": \"LastOne 2\",\r\n    \"email\": \"testEmail 2\"\r\n}\r\n}"
+						"query": "\r\n    mutation ($user: userInput) {\r\n        createUser(user: $user) {\r\n            id,\r\n            firstName,\r\n            lastName,\r\n            email\r\n        }\r\n    }\r\n",
+						"variables": "{\r\n    \"user\": {\r\n    \"firstName\": \"FirstOne 2\",\r\n    \"lastName\": \"LastOne 2\",\r\n    \"email\": \"testEmail 2\"\r\n}\r\n}"
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:3000/graphql",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2.9 Create profile",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "\r\n    mutation ($user: userInput) {\r\n        createUser(user: $user) {\r\n            id,\r\n            firstName,\r\n            lastName,\r\n            email\r\n        }\r\n    }\r\n",
+						"variables": "{\r\n    \"user\": {\r\n    \"firstName\": \"FirstOne 2\",\r\n    \"lastName\": \"LastOne 2\",\r\n    \"email\": \"testEmail 2\"\r\n}\r\n}"
 					}
 				},
 				"url": {

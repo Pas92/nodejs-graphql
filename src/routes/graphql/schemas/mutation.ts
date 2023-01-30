@@ -1,6 +1,7 @@
 import { GraphQLObjectType } from 'graphql';
+import { CreatePostDTO, postInputType, postType } from './post.schema';
 import {
-  ProfileInputType,
+  CreateProfileDTO,
   profileInputType,
   profileType,
 } from './profile.schema';
@@ -40,16 +41,16 @@ export const mutationType = new GraphQLObjectType({
       resolve: async (_source, args, context, info) => {
         const isUser = !!(await context.db.users.findOne({
           key: 'id',
-          equals: (info.variableValues.profile as ProfileInputType).userId,
+          equals: (info.variableValues.profile as CreateProfileDTO).userId,
         }));
 
         if (!isUser) {
-          throw new Error('User is not exist');
+          throw new Error('User does not exist');
         }
 
         const isProfile = !!(await context.db.profiles.findOne({
           key: 'userId',
-          equals: (info.variableValues.profile as ProfileInputType).userId,
+          equals: (info.variableValues.profile as CreateProfileDTO).userId,
         }));
 
         if (isProfile) {
@@ -57,6 +58,31 @@ export const mutationType = new GraphQLObjectType({
         }
 
         return context.db.profiles.create(info.variableValues.profile);
+      },
+    },
+    createPost: {
+      type: postType,
+      args: {
+        post: {
+          type: postInputType,
+        },
+      },
+      variables: {
+        post: {
+          type: postInputType,
+        },
+      },
+      resolve: async (_source, args, context, info) => {
+        const isUser = !!(await context.db.users.findOne({
+          key: 'id',
+          equals: (info.variableValues.post as CreatePostDTO).userId,
+        }));
+
+        if (!isUser) {
+          throw new Error('User does not exist');
+        }
+
+        return context.db.posts.create(info.variableValues.post);
       },
     },
   }),

@@ -1,15 +1,14 @@
 import {
   GraphQLID,
   GraphQLInputObjectType,
-  GraphQLNonNull,
   GraphQLObjectType,
   GraphQLString,
 } from 'graphql';
-import { PostEntity } from '../../../utils/DB/entities/DBPosts';
+import { ProfileEntity } from '../../../utils/DB/entities/DBProfiles';
 import { memberTypeEnum } from './member-type.schema';
 
-export type ProfileInputType = Partial<Omit<PostEntity, 'id' | 'userId'>> &
-  Required<Pick<PostEntity, 'userId'>>;
+export type CreateProfileDTO = Omit<ProfileEntity, 'id'>;
+export type ChangeProfileDTO = Partial<Omit<ProfileEntity, 'id' | 'userId'>>;
 
 export const profileType = new GraphQLObjectType({
   name: 'profile',
@@ -39,7 +38,7 @@ export const profileType = new GraphQLObjectType({
       type: memberTypeEnum,
     },
     userId: {
-      type: GraphQLString,
+      type: GraphQLID,
     },
   }),
 });
@@ -69,7 +68,7 @@ export const profileInputType = new GraphQLInputObjectType({
       type: memberTypeEnum,
     },
     userId: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: GraphQLID,
     },
   }),
 });
