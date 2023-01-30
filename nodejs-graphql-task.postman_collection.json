@@ -123,6 +123,64 @@
 			"response": []
 		},
 		{
+			"name": "2.5  Get users with their userSubscribedTo, profile",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "{\r\n    userWithUserSubscribedToProfiles {\r\n        id,\r\n        firstName,\r\n        lastName,\r\n        email,\r\n        subscribedToUserIds,\r\n        profile {\r\n            id,\r\n            avatar,\r\n            sex,\r\n            birthday,\r\n            country,\r\n            street,\r\n            city,\r\n            memberTypeId,\r\n            userId\r\n        }\r\n    }\r\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:3000/graphql",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2.6 Get user by id with his subscribedToUser, posts",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "{\r\n    userWithSubscribedToUserPosts {\r\n        id,\r\n        firstName,\r\n        lastName,\r\n        email,\r\n        subscribedToUserIds,\r\n        posts {\r\n            id,\r\n            userId,\r\n            title,\r\n            content\r\n        }\r\n    }\r\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:3000/graphql",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "3000",
+					"path": [
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "2.8 Create user",
 			"request": {
 				"method": "POST",
@@ -160,7 +218,7 @@
 					"mode": "graphql",
 					"graphql": {
 						"query": "\r\n    mutation ($profile: profileInput) {\r\n        createProfile(profile: $profile) {\r\n            id,\r\n            avatar,\r\n            sex,\r\n            birthday,\r\n            country,\r\n            street,\r\n            city,\r\n            memberTypeId,\r\n            userId\r\n        }\r\n    }\r\n",
-						"variables": "{\r\n    \"profile\": {\r\n        \"userId\": \"8ff68002-19b5-4e52-aab7-ac9b050075f6\",\r\n        \"avatar\": \"Avatar\",\r\n        \"sex\": \"Sex\",\r\n        \"birthday\": \"Birthday\",\r\n        \"country\": \"Country\",\r\n        \"street\": \"Street\",\r\n        \"city\": \"City\",\r\n        \"memberTypeId\": \"business\"\r\n    }\r\n}"
+						"variables": "{\r\n    \"profile\": {\r\n        \"userId\": \"29bdbc78-cf80-4709-b1cd-51e61ce725ef\",\r\n        \"avatar\": \"Avatar\",\r\n        \"sex\": \"Sex\",\r\n        \"birthday\": \"Birthday\",\r\n        \"country\": \"Country\",\r\n        \"street\": \"Street\",\r\n        \"city\": \"City\",\r\n        \"memberTypeId\": \"business\"\r\n    }\r\n}"
 					}
 				},
 				"url": {
@@ -189,7 +247,7 @@
 					"mode": "graphql",
 					"graphql": {
 						"query": "mutation ($post: postInput) {\r\n    createPost(post: $post) {\r\n        id,\r\n        userId,\r\n        title,\r\n        content\r\n    }\r\n}",
-						"variables": "{\r\n    \"post\": {\r\n        \"userId\": \"0253d34f-9195-46b2-93ed-83dbc2e94b37\",\r\n        \"title\": \"Post title\",\r\n        \"content\": \"Post content\"\r\n    }\r\n}"
+						"variables": "{\r\n    \"post\": {\r\n        \"userId\": \"b48c9f1d-8e66-4496-978d-8e7db408097b\",\r\n        \"title\": \"Post title\",\r\n        \"content\": \"Post content\"\r\n    }\r\n}"
 					}
 				},
 				"url": {
@@ -334,7 +392,7 @@
 					"mode": "graphql",
 					"graphql": {
 						"query": "mutation($currentUserId: ID, $targetUserId: ID) {\r\n    subscribeToUser(currentUserId: $currentUserId, targetUserId: $targetUserId) {\r\n        id,\r\n        firstName,\r\n        lastName,\r\n        email,\r\n        subscribedToUserIds\r\n    }\r\n}",
-						"variables": "{\r\n    \"currentUserId\": \"0c89d9ed-abb9-45fa-b9b2-04fdf83a0ade\",\r\n    \"targetUserId\": \"c697ee9b-3306-4075-ba29-ab0139d2f9a0\"\r\n}"
+						"variables": "{\r\n    \"currentUserId\": \"b48c9f1d-8e66-4496-978d-8e7db408097b\",\r\n    \"targetUserId\": \"3c2b94e2-a8ad-43d1-b436-ee121ed0a468\"\r\n}"
 					}
 				},
 				"url": {
