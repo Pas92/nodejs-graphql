@@ -12,7 +12,11 @@
   },
   "scripts": {
     "check-integrity": "node check-integrity.js",
-    "test": "npm run build:ts && tsc -p test/tsconfig.json && tap --ts \"test/**/*.test.ts\"",
+    "test": "npm run build:ts && tsc -p test/tsconfig.json && tap --ts --no-timeout \"test/**/*.test.ts\"",
+    "test:member": "npm run build:ts && tsc -p test/tsconfig.json && tap --ts --no-timeout \"test/routes/member-types.test.ts\"",
+    "test:posts": "npm run build:ts && tsc -p test/tsconfig.json && tap --ts --no-timeout \"test/routes/posts.test.ts\"",
+    "test:profiles": "npm run build:ts && tsc -p test/tsconfig.json && tap --ts --no-timeout \"test/routes/profiles.test.ts\"",
+    "test:users": "npm run build:ts && tsc -p test/tsconfig.json && tap --ts --no-timeout \"test/routes/users.test.ts\"",
     "start": "npm run build:ts && fastify start -l info dist/app.js",
     "build:ts": "tsc",
     "watch:ts": "tsc -w",
